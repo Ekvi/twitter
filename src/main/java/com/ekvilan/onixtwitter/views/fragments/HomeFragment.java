@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.controllers.TweetsController;
@@ -20,26 +21,46 @@ public class HomeFragment extends Fragment {
     private TweetsController controller = TweetsController.getInstance();
 
     private RecyclerView recyclerView;
+    private ImageView switcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        List<Tweet> tweets = controller.getTweets();
-        //Log.d("my", "get tweets " + tweets.size());
+        //List<Tweet> tweets = controller.getTweets();
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        /*recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        RecyclerView.ItemDecoration()*/
+        initView(view);
+        addListeners();
+        setUpTweetsList(controller.getTweets());
+        //recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
+        /*recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
 
 
         return view;
         //return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    private void initView(View view) {
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        switcher = (ImageView)view.findViewById(R.id.switcher);
+    }
+
+    private void setUpTweetsList(List<Tweet> tweets) {
+        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void addListeners() {
+        switcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

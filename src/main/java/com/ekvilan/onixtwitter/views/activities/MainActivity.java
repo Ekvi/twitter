@@ -1,11 +1,13 @@
 package com.ekvilan.onixtwitter.views.activities;
 
+
 import android.support.v4.app.FragmentTabHost;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ekvilan.onixtwitter.R;
@@ -15,9 +17,10 @@ import com.ekvilan.onixtwitter.views.fragments.MenuFragment;
 import com.ekvilan.onixtwitter.views.fragments.ProfileFragment;
 
 
-public class MainActivity /*extends FragmentActivity*/ extends AppCompatActivity {
+public class MainActivity  extends AppCompatActivity {
 
     private FragmentTabHost mTabHost;
+    private ImageView switcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +28,11 @@ public class MainActivity /*extends FragmentActivity*/ extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        switcher = (ImageView)findViewById(R.id.switcher);
+
         initToolBar();
         initTabs();
+        addListeners();
     }
 
     private void initToolBar() {
@@ -52,6 +58,28 @@ public class MainActivity /*extends FragmentActivity*/ extends AppCompatActivity
         mTabHost.addTab(mTabHost.newTabSpec("map").setIndicator(mapView),MapFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("menu").setIndicator(menuView ),MenuFragment.class, null);
     }
+
+    private void addListeners() {
+        switcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //showSingleTweet();
+            }
+        });
+    }
+
+  /*  private void showSingleTweet() {
+        Fragment newFragment = new ExampleFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+// Commit the transaction
+        transaction.commit();
+    }*/
 
    /* private View createView(Context context, int title, int icon) {
         View view = LayoutInflater.from(context).inflate(R.layout.tab_layout, null);

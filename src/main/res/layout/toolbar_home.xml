@@ -7,10 +7,10 @@
     app:theme="@style/ThemeOverlay.AppCompat.Light">
 
     <ImageView
-        android:id="@+id/myAds"
-        android:layout_height="48dp"
-        android:layout_width="48dp"
-        android:background="@drawable/file_document"
+        android:id="@+id/switcher"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:background="@drawable/switcher_off"
         android:layout_gravity="start"  />
 
     <TextView
@@ -19,6 +19,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="22sp"
-        android:textColor="@color/textColor"/>
+        android:textColor="@color/whiteColor"/>
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:background="@drawable/top_menu"
+        android:layout_gravity="end"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp" />
 
 </android.support.v7.widget.Toolbar>

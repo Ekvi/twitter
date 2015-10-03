@@ -8,7 +8,7 @@
     </item>
     <item android:top="2dp" android:left="-2dp" android:right="-2dp">
         <shape android:shape="rectangle" >
-            <solid android:color="@color/tweetBackground" />            
+            <solid android:color="@color/whiteColor" />
         </shape>
     </item>
 
