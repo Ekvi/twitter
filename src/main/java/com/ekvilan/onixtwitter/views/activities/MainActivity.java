@@ -1,10 +1,14 @@
 package com.ekvilan.onixtwitter.views.activities;
 
 
+
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +19,7 @@ import com.ekvilan.onixtwitter.views.fragments.HomeFragment;
 import com.ekvilan.onixtwitter.views.fragments.MapFragment;
 import com.ekvilan.onixtwitter.views.fragments.MenuFragment;
 import com.ekvilan.onixtwitter.views.fragments.ProfileFragment;
+import com.ekvilan.onixtwitter.views.fragments.SingleTweetFragment;
 
 
 public class MainActivity  extends AppCompatActivity {
@@ -63,23 +68,25 @@ public class MainActivity  extends AppCompatActivity {
         switcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //showSingleTweet();
+                showSingleTweet();
             }
         });
     }
 
-  /*  private void showSingleTweet() {
-        Fragment newFragment = new ExampleFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+    private void showSingleTweet() {
+        Fragment singleTweetFragment = new SingleTweetFragment();
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack
-        transaction.replace(R.id.fragment_container, newFragment);
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.realTabContent, singleTweetFragment);
         transaction.addToBackStack(null);
-
+        Log.d("my", "creating single fragment");
 // Commit the transaction
         transaction.commit();
-    }*/
+    }
 
    /* private View createView(Context context, int title, int icon) {
         View view = LayoutInflater.from(context).inflate(R.layout.tab_layout, null);

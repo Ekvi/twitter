@@ -23,15 +23,18 @@ import java.util.List;
 public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int EMPTY_VIEW = 10;
 
+    private boolean singleTweet;
+
     //private DateUtils dateUtils = new DateUtils();
 
     private LayoutInflater inflater;
     //private Context context;
     private List<Tweet> tweets;
 
-    public TweetsAdapter(Context context, List<Tweet> tweets) {
+    public TweetsAdapter(Context context, List<Tweet> tweets, boolean singleTweet) {
         inflater = LayoutInflater.from(context);
         this.tweets = tweets;
+        this.singleTweet = singleTweet;
         //this.context = context;
     }
 
@@ -41,6 +44,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return new EmptyViewHolder(inflater.inflate(R.layout.empty_row, parent, false));
         }*/
 
+        /*if(!singleTweet) {
+            return new TweetViewHolder(
+                    inflater.inflate(R.layout.tweet, parent, false));
+        }*/ /*else {
+            return new TweetViewHolder(
+                    inflater.inflate(R.layout.single, parent, false));
+        }*/
         return new TweetViewHolder(
                 inflater.inflate(R.layout.tweet, parent, false));
     }
@@ -80,19 +90,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return super.getItemViewType(position);
     }
 
-    /*private String formatDate(String date) {
-        String newDate = dateUtils.formatToYesterdayOrToday(date);
-
-        if(newDate.startsWith(DateUtils.TODAY)) {
-            newDate = newDate.replace(
-                    DateUtils.TODAY, context.getResources().getString(R.string.todayDate));
-        } else if (newDate.startsWith(DateUtils.YESTERDAY)) {
-            newDate = newDate.replace(
-                    DateUtils.YESTERDAY, context.getResources().getString(R.string.yesterdayDate));
-        }
-        return newDate;
-    }*/
-
     public class TweetViewHolder extends RecyclerView.ViewHolder {
         private ImageView avatar;
         private ImageView image;
@@ -119,10 +116,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }*/
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
+        private ImageView image;
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
+        public DownloadImageTask(ImageView image) {
+            this.image = image;
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -138,7 +135,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            image.setImageBitmap(result);
         }
     }
 }

@@ -3,6 +3,7 @@
     <color name="toolbarBackground">#72252F</color>
     <color name="whiteColor">#FFFFFF</color>
     <color name="tabBackground">#72252F</color>
+    <color name="btnUpDown">#72252F</color>
     <color name="grey">#BDBDBD</color>
     <color name="splashBackgroundStart">#5A0404</color>
     <color name="splashBackgroundEnd">#150103</color>

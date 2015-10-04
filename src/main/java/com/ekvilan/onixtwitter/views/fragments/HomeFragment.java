@@ -1,10 +1,11 @@
 package com.ekvilan.onixtwitter.views.fragments;
 
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,18 +22,18 @@ public class HomeFragment extends Fragment {
     private TweetsController controller = TweetsController.getInstance();
 
     private RecyclerView recyclerView;
-    private ImageView switcher;
+    //private ImageView switcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         //List<Tweet> tweets = controller.getTweets();
-
+        Log.d("my", "Home Fragment");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         initView(view);
-        addListeners();
+        //addListeners();
         setUpTweetsList(controller.getTweets());
         //recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
@@ -46,22 +47,22 @@ public class HomeFragment extends Fragment {
 
     private void initView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        switcher = (ImageView)view.findViewById(R.id.switcher);
+        //switcher = (ImageView)view.findViewById(R.id.switcher);
     }
 
     private void setUpTweetsList(List<Tweet> tweets) {
-        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets));
+        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets, false));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-    private void addListeners() {
+ /*   private void addListeners() {
         switcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-    }
+    }*/
 
     /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
