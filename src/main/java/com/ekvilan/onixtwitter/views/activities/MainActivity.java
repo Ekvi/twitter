@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ekvilan.onixtwitter.R;
+import com.ekvilan.onixtwitter.views.fragments.BaseContainerFragment;
+import com.ekvilan.onixtwitter.views.fragments.HomeContainerFragment;
 import com.ekvilan.onixtwitter.views.fragments.HomeFragment;
 import com.ekvilan.onixtwitter.views.fragments.MapFragment;
 import com.ekvilan.onixtwitter.views.fragments.MenuFragment;
@@ -23,9 +25,13 @@ import com.ekvilan.onixtwitter.views.fragments.SingleTweetFragment;
 
 
 public class MainActivity  extends AppCompatActivity {
+    private static final String TAB_HOME = "home";
+    private static final String TAB_PROFILE= "profile";
+    private static final String TAB_MAP = "map";
+    private static final String TAB_MENU = "menu";
 
-    private FragmentTabHost mTabHost;
-    private ImageView switcher;
+    private FragmentTabHost tabHost;
+    //private ImageView switcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +39,21 @@ public class MainActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        switcher = (ImageView)findViewById(R.id.switcher);
+        //switcher = (ImageView)findViewById(R.id.switcher);
 
-        initToolBar();
+        //initToolBar();
         initTabs();
         addListeners();
     }
 
-    private void initToolBar() {
+    /*private void initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         TextView textView = (TextView) toolbar.findViewById(R.id.titleToolbar);
         textView.setText(getResources().getString(R.string.title_home));
-    }
+    }*/
 
     private void initTabs() {
         View homeView = LayoutInflater.from(MainActivity.this).inflate(R.layout.tab_home, null);
@@ -55,22 +61,41 @@ public class MainActivity  extends AppCompatActivity {
         View mapView = LayoutInflater.from(MainActivity.this).inflate(R.layout.tab_map, null);
         View menuView = LayoutInflater.from(MainActivity.this).inflate(R.layout.tab_menu, null);
 
-        mTabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.realTabContent);
+        tabHost = (FragmentTabHost)findViewById(android.R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager(), R.id.realTabContent);
 
-        mTabHost.addTab(mTabHost.newTabSpec("home").setIndicator(homeView),HomeFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("profile").setIndicator(profileView),ProfileFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("map").setIndicator(mapView),MapFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("menu").setIndicator(menuView ),MenuFragment.class, null);
+        //mTabHost.addTab(mTabHost.newTabSpec("home").setIndicator(homeView),HomeFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_HOME).setIndicator(homeView),HomeContainerFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_PROFILE).setIndicator(profileView),ProfileFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_MAP).setIndicator(mapView),MapFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec(TAB_MENU).setIndicator(menuView ),MenuFragment.class, null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean isPopFragment = false;
+        String currentTabTag = tabHost.getCurrentTabTag();
+        if (currentTabTag.equals(TAB_HOME)) {
+            isPopFragment = ((BaseContainerFragment)getSupportFragmentManager().findFragmentByTag(TAB_HOME)).popFragment();
+        } else if (currentTabTag.equals(TAB_PROFILE)) {
+            isPopFragment = ((BaseContainerFragment)getSupportFragmentManager().findFragmentByTag(TAB_PROFILE)).popFragment();
+        } else if (currentTabTag.equals(TAB_MAP)) {
+            isPopFragment = ((BaseContainerFragment)getSupportFragmentManager().findFragmentByTag(TAB_MAP)).popFragment();
+        } else if (currentTabTag.equals(TAB_MENU)) {
+            isPopFragment = ((BaseContainerFragment)getSupportFragmentManager().findFragmentByTag(TAB_MENU)).popFragment();
+        }
+        if (!isPopFragment) {
+            finish();
+        }
     }
 
     private void addListeners() {
-        switcher.setOnClickListener(new View.OnClickListener() {
+        /*switcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showSingleTweet();
             }
-        });
+        });*/
     }
 
     private void showSingleTweet() {

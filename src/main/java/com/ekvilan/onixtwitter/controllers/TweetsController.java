@@ -2,6 +2,7 @@ package com.ekvilan.onixtwitter.controllers;
 
 
 import com.ekvilan.onixtwitter.models.Tweet;
+import com.ekvilan.onixtwitter.models.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,8 @@ public class TweetsController {
     private static TweetsController instance;
 
     private List<Tweet> tweets = new ArrayList<>();
+
+    private UserInfo userInfo;
 
     private TweetsController() {}
 
@@ -26,5 +29,13 @@ public class TweetsController {
 
     public List<Tweet> getTweets() {
         return tweets;
+    }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void saveUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 }

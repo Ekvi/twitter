@@ -1,11 +1,7 @@
 package com.ekvilan.onixtwitter.views.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,18 +10,14 @@ import android.widget.TextView;
 
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.models.Tweet;
+import com.ekvilan.onixtwitter.utils.DownloadImageTask;
 
-
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int EMPTY_VIEW = 10;
 
     private boolean singleTweet;
-
-    //private DateUtils dateUtils = new DateUtils();
 
     private LayoutInflater inflater;
     //private Context context;
@@ -114,28 +106,4 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(itemView);
         }
     }*/
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        private ImageView image;
-
-        public DownloadImageTask(ImageView image) {
-            this.image = image;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new URL(urls[0]).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("er", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            image.setImageBitmap(result);
-        }
-    }
 }

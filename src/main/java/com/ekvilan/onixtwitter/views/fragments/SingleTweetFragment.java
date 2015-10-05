@@ -3,11 +3,16 @@ package com.ekvilan.onixtwitter.views.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +40,8 @@ public class SingleTweetFragment extends Fragment {
     private TextView tvDate;
     private TextView tvMessage;
 
+    private ImageView switcher;
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,6 +49,11 @@ public class SingleTweetFragment extends Fragment {
         Log.d("my", "hello from single fragment");
 
         View view = inflater.inflate(R.layout.fragment_single_tweet, container, false);
+
+
+        initToolBar(view);
+
+        addListeners();
 
 
         tvName = (TextView) view.findViewById(R.id.name);
@@ -92,6 +104,25 @@ public class SingleTweetFragment extends Fragment {
         return view;
     }
 
+    private void initToolBar(View view) {
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.home_toolbar);
+        //Log.d("my", "toolbar " + toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView textView = (TextView) toolbar.findViewById(R.id.titleToolbar);
+        textView.setText(getResources().getString(R.string.title_home));
+        switcher = (ImageView) toolbar.findViewById(R.id.switcher);
+        //switcher.setImageBitmap();
+
+        Drawable image = ResourcesCompat.getDrawable(getResources(), R.drawable.switcher_on, null);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+            switcher.setBackgroundDrawable(image);
+        }else{
+            switcher.setBackground(image);
+        }
+    }
+
     /*private void initView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
     }
@@ -100,6 +131,31 @@ public class SingleTweetFragment extends Fragment {
         recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets, true));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }*/
+
+    private void addListeners() {
+        switcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTweetsList();
+            }
+        });
+    }
+
+    private void showTweetsList() {
+        /*Fragment singleTweetFragment = new SingleTweetFragment();
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.realTabContent, singleTweetFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();*/
+
+        Fragment homeFragment = new HomeFragment();
+        //((BaseContainerFragment)getParentFragment()).replaceFragment(fragment, true);
+        HomeContainerFragment home = (HomeContainerFragment) getParentFragment();
+        Log.d("my", "home parent " + home);
+        home.replaceFragment(homeFragment, true);
+        ///((HomeFragment) getParentFragment())
+    }
 
     private class ImageTask extends AsyncTask<String, Void, Bitmap> {
         private ImageView image;

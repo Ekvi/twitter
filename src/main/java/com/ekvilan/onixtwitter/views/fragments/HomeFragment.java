@@ -1,15 +1,22 @@
 package com.ekvilan.onixtwitter.views.fragments;
 
 
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.controllers.TweetsController;
@@ -18,11 +25,11 @@ import com.ekvilan.onixtwitter.views.adapters.TweetsAdapter;
 
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment/*BaseContainerFragment*/ {
     private TweetsController controller = TweetsController.getInstance();
 
     private RecyclerView recyclerView;
-    //private ImageView switcher;
+    private ImageView switcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -32,17 +39,32 @@ public class HomeFragment extends Fragment {
         Log.d("my", "Home Fragment");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        initView(view);
-        //addListeners();
-        setUpTweetsList(controller.getTweets());
-        //recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        initToolBar(view);
 
-        /*recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));*/
+        initView(view);
+        addListeners();
+        setUpTweetsList(controller.getTweets());
 
 
         return view;
-        //return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    private void initToolBar(View view) {
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.home_toolbar);
+        //Log.d("my", "toolbar " + toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView textView = (TextView) toolbar.findViewById(R.id.titleToolbar);
+        textView.setText(getResources().getString(R.string.title_home));
+
+        switcher = (ImageView)view.findViewById(R.id.switcher);
+        Drawable image = ResourcesCompat.getDrawable(getResources(), R.drawable.switcher_off, null);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+            switcher.setBackgroundDrawable(image);
+        }else{
+            switcher.setBackground(image);
+        }
     }
 
     private void initView(View view) {
@@ -55,14 +77,30 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
- /*   private void addListeners() {
+    private void addListeners() {
         switcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showSingleTweet();
             }
         });
-    }*/
+    }
+
+    private void showSingleTweet() {
+        /*Fragment singleTweetFragment = new SingleTweetFragment();
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.realTabContent, singleTweetFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();*/
+
+        Fragment singleFragment = new SingleTweetFragment();
+        //((BaseContainerFragment)getParentFragment()).replaceFragment(fragment, true);
+        HomeContainerFragment home = (HomeContainerFragment) getParentFragment();
+        Log.d("my", "home parent " + home);
+        home.replaceFragment(singleFragment, true);
+        ///((HomeFragment) getParentFragment())
+    }
 
     /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;

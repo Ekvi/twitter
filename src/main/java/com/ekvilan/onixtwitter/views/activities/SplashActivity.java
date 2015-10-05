@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.controllers.TweetsController;
 import com.ekvilan.onixtwitter.models.Tweet;
+import com.ekvilan.onixtwitter.models.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,6 +201,14 @@ public class SplashActivity extends Activity {
 
                 //List<twitter4j.Status> statuses = twitter.getHomeTimeline(paging);
                 User u = twitter.showUser(accessToken.getUserId());
+                Log.d("my", "original image " + u.getProfileBackgroundImageURL());
+                Log.d("my", "getProfileBannerIPadRetinaURL " + u.getProfileBannerIPadRetinaURL());
+                Log.d("my", "getProfileBannerRetinaURL " + u.getProfileBannerRetinaURL());
+                Log.d("my", "getProfileBannerMobileRetinaURL " + u.getProfileBannerMobileRetinaURL());
+                Log.d("my", "getProfileBannerIPadURL " + u.getProfileBannerIPadURL());
+                Log.d("my", "getProfileBannerMobileURL " + u.getProfileBannerMobileURL());
+                Log.d("my", "getProfileBannerURL " + u.getProfileBannerURL());
+                //Log.d("my", "getProfileBannerURL " + u.get);
                 List<twitter4j.Status> statuses = twitter.getUserTimeline(u.getName(), paging);
                 //List<twitter4j.Status> statuses = twitter.get;
 
@@ -213,6 +222,7 @@ public class SplashActivity extends Activity {
                     Log.d("my", "getSource() " + status.getSource());*/
                     //Log.d("my", "getText() " + status.getText());
                     User user = status.getUser();
+
                     /*Log.d("my", "user " + friend.getName());
                     Log.d("my", "screenNAme " + friend.getScreenName());
                     Log.d("my", "image " + friend.getMiniProfileImageURL());
@@ -245,6 +255,7 @@ public class SplashActivity extends Activity {
                 //saveToSharedPrefs(tweets);
                 TweetsController controller = TweetsController.getInstance();
                 controller.saveTweets(tweets);
+                controller.saveUserInfo(new UserInfo(u.getName(), u.getScreenName(), u.getProfileBannerMobileRetinaURL(), u.getProfileImageURL(), u.getStatusesCount(), u.getFollowersCount(), u.getFriendsCount(), u.getFavouritesCount()));
 
 
             } catch (TwitterException e) {

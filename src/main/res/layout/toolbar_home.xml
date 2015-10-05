@@ -10,8 +10,10 @@
         android:id="@+id/switcher"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:background="@drawable/switcher_off"
+
         android:layout_gravity="start"  />
+
+    <!--android:background="@drawable/switcher_off"-->
 
     <TextView
         android:id="@+id/titleToolbar"
