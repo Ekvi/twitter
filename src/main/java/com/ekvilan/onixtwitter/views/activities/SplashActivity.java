@@ -1,5 +1,6 @@
 package com.ekvilan.onixtwitter.views.activities;
 
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -14,9 +15,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -47,9 +45,7 @@ public class SplashActivity extends Activity {
     private SharedPreferences pref;
 
     private ImageView login;
-    private ImageView rotateImage;
     private Dialog authDialog;
-    private ProgressDialog progress;
     private WebView webView;
 
     private Twitter twitter;
@@ -57,46 +53,22 @@ public class SplashActivity extends Activity {
     private AccessToken accessToken;
     private String oauthUrl;
     private String oauthVerifier;
-    //private String profileUrl;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-
         saveKeys();
 
         login = (ImageView) findViewById(R.id.login);
-        //rotateImage = (ImageView) findViewById(R.id.rotateImage);
 
-        pref = getPreferences(MODE_PRIVATE);
         twitter = new TwitterFactory().getInstance();
-        twitter.setOAuthConsumer(pref.getString("CONSUMER_KEY", ""), pref.getString("CONSUMER_SECRET", ""));
-
+        twitter.setOAuthConsumer(
+                pref.getString("CONSUMER_KEY", ""), pref.getString("CONSUMER_SECRET", ""));
 
         addListeners();
     }
-
-
-    private ProgressDialog createProgressDialog(Context context) {
-        ProgressDialog dialog = new ProgressDialog(context);
-        /*try {
-            dialog.show();
-        } catch (WindowManager.BadTokenException e) {
-
-        }*/
-        dialog.show();
-        dialog.setCancelable(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.progress_dialog);
-        // dialog.setMessage(Message);
-        return dialog;
-    }
-
 
     private void saveKeys() {
         pref = getPreferences(MODE_PRIVATE);
@@ -157,14 +129,16 @@ public class SplashActivity extends Activity {
                             new AccessTwitterAsyncTask().execute();
                         }else if(url.contains("denied")){
                             authDialog.dismiss();
-                            Toast.makeText(SplashActivity.this, "Sorry !, Permission Denied", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SplashActivity.this,
+                                    "Sorry !, Permission Denied", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
                 authDialog.show();
                 authDialog.setCancelable(true);
             }else{
-                Toast.makeText(SplashActivity.this, "Sorry !, Network Error or Invalid Credentials", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SplashActivity.this,
+                        "Sorry !, Network Error or Invalid Credentials", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -174,20 +148,11 @@ public class SplashActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
-            /*progress = new ProgressDialog(SplashActivity.this);
-            progress.setMessage("Fetching Data ...");
-            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progress.setIndeterminate(true);
-            progress.show();*/
-
-            //rotate();
             createProgressDialog(SplashActivity.this);
         }
 
         @Override
         protected Boolean doInBackground(String... args) {
-            List<Tweet> tweets = new ArrayList<>();
             try {
                 accessToken = twitter.getOAuthAccessToken(requestToken, oauthVerifier);
 
@@ -199,67 +164,21 @@ public class SplashActivity extends Activity {
                 //paging.setCount(200);
                 paging.setCount(20);
 
-                //List<twitter4j.Status> statuses = twitter.getHomeTimeline(paging);
-                User u = twitter.showUser(accessToken.getUserId());
-                Log.d("my", "original image " + u.getProfileBackgroundImageURL());
-                Log.d("my", "getProfileBannerIPadRetinaURL " + u.getProfileBannerIPadRetinaURL());
-                Log.d("my", "getProfileBannerRetinaURL " + u.getProfileBannerRetinaURL());
-                Log.d("my", "getProfileBannerMobileRetinaURL " + u.getProfileBannerMobileRetinaURL());
-                Log.d("my", "getProfileBannerIPadURL " + u.getProfileBannerIPadURL());
-                Log.d("my", "getProfileBannerMobileURL " + u.getProfileBannerMobileURL());
-                Log.d("my", "getProfileBannerURL " + u.getProfileBannerURL());
-                //Log.d("my", "getProfileBannerURL " + u.get);
-                List<twitter4j.Status> statuses = twitter.getUserTimeline(u.getName(), paging);
-                //List<twitter4j.Status> statuses = twitter.get;
+                User owner = twitter.showUser(accessToken.getUserId());
+                List<twitter4j.Status> statuses = twitter.getUserTimeline(owner.getName(), paging);
 
-                Log.d("my", statuses.size() + " Feeds");
-                for (int i = 0; i < statuses.size(); i++) {
-                    Log.d("my", "//////////////////////////////////////////////");
-                    twitter4j.Status status = statuses.get(i);
-                    //Log.d("Tweet Count " + (i + 1), status.getText() + "\n\n");
-                    /*Log.d("my", "getInReplyToScreenName " + status.getInReplyToScreenName());
-                    Log.d("my", "getCurrentUserRetweetId() " + status.getCurrentUserRetweetId());
-                    Log.d("my", "getSource() " + status.getSource());*/
-                    //Log.d("my", "getText() " + status.getText());
-                    User user = status.getUser();
+                List<Tweet> tweets = createTweetsList(statuses);
+                UserInfo userInfo = new UserInfo(owner.getName(), owner.getScreenName(),
+                        owner.getProfileBannerMobileRetinaURL(), owner.getProfileImageURL(),
+                        owner.getStatusesCount(), owner.getFollowersCount(),
+                        owner.getFriendsCount(), owner.getFavouritesCount());
 
-                    /*Log.d("my", "user " + friend.getName());
-                    Log.d("my", "screenNAme " + friend.getScreenName());
-                    Log.d("my", "image " + friend.getMiniProfileImageURL());
-                    Log.d("my", "date " + status.getCreatedAt());*/
-
-                    MediaEntity[] media = status.getMediaEntities();
-                    String imageUrl = media.length > 0 ? media[0].getMediaURL() : "";
-
-
-                    /*Log.d("my", "url = " + user.getProfileImageURL());
-                    Log.d("my", "imageUrl  = " + imageUrl);*/
-                    tweets.add(new Tweet(
-                            user.getName(), user.getScreenName(), user.getProfileImageURL(),
-                            status.getText(), imageUrl, status.getCreatedAt()));
-                }
-
-
-
-                /*profileUrl = user.getOriginalProfileImageURL();
-                edit.putString("NAME", user.getName());
-                edit.putString("IMAGE_URL", user.getOriginalProfileImageURL());
-                edit.putString("DESCRIPTION", user.getDescription());
-                edit.putString("LOCATION", user.getLocation());
-                edit.putInt("FRIENDS_COUNT", user.getFriendsCount());
-                edit.putInt("FOLLOWERS_COUNT", user.getFollowersCount());
-                edit.putInt("FAVOURITES_COUNT", user.getFavouritesCount());
-
-                edit.commit();*/
-
-                //saveToSharedPrefs(tweets);
                 TweetsController controller = TweetsController.getInstance();
                 controller.saveTweets(tweets);
-                controller.saveUserInfo(new UserInfo(u.getName(), u.getScreenName(), u.getProfileBannerMobileRetinaURL(), u.getProfileImageURL(), u.getStatusesCount(), u.getFollowersCount(), u.getFriendsCount(), u.getFavouritesCount()));
-
+                controller.saveUserInfo(userInfo);
 
             } catch (TwitterException e) {
-                // TODO Auto-generated catch block
+                Log.e("er", e.getMessage());
                 e.printStackTrace();
             }
 
@@ -267,36 +186,36 @@ public class SplashActivity extends Activity {
         }
         @Override
         protected void onPostExecute(Boolean response) {
-            Log.d("my", "onPostExecute() response " + response);
-            /*if(response){
-                progress.hide();
-                Fragment profile = new ProfileFragment();
-                FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
-                ft.replace(R.id.content_frame, profile);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
-                ft.commit();
-            }*/
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
+    }
 
-        /*private void saveToSharedPrefs(List<Tweet> tweets) {
-            *//*preferences = getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt(POSITION, lessons.getSelectedItemPosition());
-            editor.commit();*//*
-            Log.d("my", "saved tweets " + tweets.size());
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
-            SharedPreferences.Editor prefsEditor = prefs.edit();
+    private List<Tweet> createTweetsList(List<twitter4j.Status> statuses) {
+        List<Tweet> tweets = new ArrayList<>();
 
-            Gson gson = new Gson();
-            //String jsonTweets = gson.toJson(tweets);
+        for (int i = 0; i < statuses.size(); i++) {
+            twitter4j.Status status = statuses.get(i);
+            User user = status.getUser();
 
-            prefsEditor.putString("TWEETS", gson.toJson(tweets));
-            prefsEditor.commit();
-        }*/
+            MediaEntity[] media = status.getMediaEntities();
+            String imageUrl = media.length > 0 ? media[0].getMediaURL() : "";
 
+            tweets.add(new Tweet(
+                    user.getName(), user.getScreenName(), user.getProfileImageURL(),
+                    status.getText(), imageUrl, status.getCreatedAt()));
+        }
+
+        return tweets;
+    }
+
+    private ProgressDialog createProgressDialog(Context context) {
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.show();
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.setContentView(R.layout.progress_dialog);
+        return dialog;
     }
 }
