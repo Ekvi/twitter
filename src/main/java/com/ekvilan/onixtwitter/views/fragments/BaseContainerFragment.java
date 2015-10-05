@@ -2,7 +2,6 @@ package com.ekvilan.onixtwitter.views.fragments;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import com.ekvilan.onixtwitter.R;
 
@@ -20,7 +19,6 @@ public class BaseContainerFragment extends Fragment {
     }
 
     public boolean popFragment() {
-        Log.e("test", "pop fragment: " + getChildFragmentManager().getBackStackEntryCount());
         boolean isPop = false;
         if (getChildFragmentManager().getBackStackEntryCount() > 0) {
             isPop = true;
@@ -28,5 +26,4 @@ public class BaseContainerFragment extends Fragment {
         }
         return isPop;
     }
-
 }

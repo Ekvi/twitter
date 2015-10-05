@@ -5,13 +5,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +23,7 @@ import com.ekvilan.onixtwitter.views.adapters.TweetsAdapter;
 
 import java.util.List;
 
-public class HomeFragment extends Fragment/*BaseContainerFragment*/ {
-    private TweetsController controller = TweetsController.getInstance();
-
+public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ImageView switcher;
 
@@ -35,23 +31,20 @@ public class HomeFragment extends Fragment/*BaseContainerFragment*/ {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        //List<Tweet> tweets = controller.getTweets();
-        Log.d("my", "Home Fragment");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         initToolBar(view);
-
         initView(view);
         addListeners();
-        setUpTweetsList(controller.getTweets());
 
+        TweetsController controller = TweetsController.getInstance();
+        setUpTweetsList(controller.getTweets());
 
         return view;
     }
 
     private void initToolBar(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.home_toolbar);
-        //Log.d("my", "toolbar " + toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -69,7 +62,6 @@ public class HomeFragment extends Fragment/*BaseContainerFragment*/ {
 
     private void initView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        //switcher = (ImageView)view.findViewById(R.id.switcher);
     }
 
     private void setUpTweetsList(List<Tweet> tweets) {
@@ -87,46 +79,8 @@ public class HomeFragment extends Fragment/*BaseContainerFragment*/ {
     }
 
     private void showSingleTweet() {
-        /*Fragment singleTweetFragment = new SingleTweetFragment();
-        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.realTabContent, singleTweetFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();*/
-
         Fragment singleFragment = new SingleTweetFragment();
-        //((BaseContainerFragment)getParentFragment()).replaceFragment(fragment, true);
-        HomeContainerFragment home = (HomeContainerFragment) getParentFragment();
-        Log.d("my", "home parent " + home);
-        home.replaceFragment(singleFragment, true);
-        ///((HomeFragment) getParentFragment())
+        HomeContainerFragment containerFragment = (HomeContainerFragment) getParentFragment();
+        containerFragment.replaceFragment(singleFragment, true);
     }
-
-    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.d("my", "exception");
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            Log.d("my", "result " + result);
-            Log.d("my", "bmImage " + bmImage);
-            bmImage.setImageBitmap(result);
-        }
-    }*/
 }
