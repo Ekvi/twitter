@@ -21,14 +21,19 @@ import com.ekvilan.onixtwitter.utils.DownloadImageTask;
 
 
 public class SingleTweetFragment extends Fragment {
+    private TweetsController controller;
+
     private ImageView avatar;
     private ImageView image;
     private TextView tvName;
     private TextView tvScreenName;
     private TextView tvDate;
     private TextView tvMessage;
-
     private ImageView switcher;
+    private ImageView btnUp;
+    private ImageView btnDown;
+
+    private int position = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -40,8 +45,9 @@ public class SingleTweetFragment extends Fragment {
         initView(view);
         addListeners();
 
-        TweetsController controller = TweetsController.getInstance();
-        setUpData(controller.getTweets().get(0));
+        controller = TweetsController.getInstance();
+
+        showTweet(controller.getTweets().get(position));
 
         return view;
     }
@@ -70,9 +76,11 @@ public class SingleTweetFragment extends Fragment {
         tvMessage = (TextView) view.findViewById(R.id.message);
         avatar = (ImageView) view.findViewById(R.id.avatar);
         image = (ImageView) view.findViewById(R.id.image);
+        btnUp = (ImageView) view.findViewById(R.id.btnUp);
+        btnDown = (ImageView) view.findViewById(R.id.btnDown);
     }
 
-    private void setUpData(Tweet tweet) {
+    private void showTweet(Tweet tweet) {
         new DownloadImageTask(avatar).execute(tweet.getUserImage());
         setUpImage(tweet);
 
@@ -97,6 +105,24 @@ public class SingleTweetFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 showTweetsList();
+            }
+        });
+
+        btnUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(position > 0) {
+                    showTweet(controller.getTweets().get(--position));
+                }
+            }
+        });
+
+        btnDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(position < controller.getTweets().size() - 1) {
+                    showTweet(controller.getTweets().get(++position));
+                }
             }
         });
     }
