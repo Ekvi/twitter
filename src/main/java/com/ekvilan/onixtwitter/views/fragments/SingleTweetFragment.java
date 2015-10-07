@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.controllers.TweetsController;
 import com.ekvilan.onixtwitter.models.Tweet;
+import com.ekvilan.onixtwitter.utils.DateUtils;
 import com.ekvilan.onixtwitter.utils.DownloadImageTask;
 
 
@@ -58,7 +59,7 @@ public class SingleTweetFragment extends Fragment {
 
         tvName.setText(tweet.getName());
         tvScreenName.setText("@" + tweet.getScreenName());
-        tvDate.setText(tweet.getDate().toString().substring(0, 3));
+        tvDate.setText(DateUtils.formatDate(getActivity(), tweet.getDate()));
         tvMessage.setText(tweet.getMessage());
     }
 

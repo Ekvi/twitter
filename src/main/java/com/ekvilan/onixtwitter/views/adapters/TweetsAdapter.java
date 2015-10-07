@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.models.Tweet;
+import com.ekvilan.onixtwitter.utils.DateUtils;
 import com.ekvilan.onixtwitter.utils.DownloadImageTask;
 
 import java.util.List;
@@ -17,34 +18,23 @@ import java.util.List;
 public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int EMPTY_VIEW = 10;
 
-    private boolean singleTweet;
-
     private LayoutInflater inflater;
-    //private Context context;
+    private Context context;
     private List<Tweet> tweets;
 
-    public TweetsAdapter(Context context, List<Tweet> tweets, boolean singleTweet) {
+    public TweetsAdapter(Context context, List<Tweet> tweets) {
         inflater = LayoutInflater.from(context);
         this.tweets = tweets;
-        this.singleTweet = singleTweet;
-        //this.context = context;
+        this.context = context;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        /*if(viewType == EMPTY_VIEW) {
-            return new EmptyViewHolder(inflater.inflate(R.layout.empty_row, parent, false));
-        }*/
-
-        /*if(!singleTweet) {
-            return new TweetViewHolder(
-                    inflater.inflate(R.layout.tweet, parent, false));
-        }*/ /*else {
-            return new TweetViewHolder(
-                    inflater.inflate(R.layout.single, parent, false));
-        }*/
-        return new TweetViewHolder(
-                inflater.inflate(R.layout.tweet, parent, false));
+        if(viewType == EMPTY_VIEW) {
+            return new EmptyViewHolder(inflater.inflate(R.layout.empty_tweet, parent, false));
+        } else {
+            return new TweetViewHolder(inflater.inflate(R.layout.tweet, parent, false));
+        }
     }
 
     @Override
@@ -55,7 +45,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             tweetsHolder.tvName.setText(tweet.getName());
             tweetsHolder.tvScreenName.setText("@" + tweet.getScreenName());
-            tweetsHolder.tvDate.setText(tweet.getDate().toString().substring(0, 3));
+            tweetsHolder.tvDate.setText(DateUtils.formatDate(context, tweet.getDate()));
             tweetsHolder.tvMessage.setText(tweet.getMessage());
 
             new DownloadImageTask(tweetsHolder.avatar).execute(tweet.getUserImage());
@@ -101,9 +91,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-   /* public class EmptyViewHolder extends RecyclerView.ViewHolder {
+    public class EmptyViewHolder extends RecyclerView.ViewHolder {
         public EmptyViewHolder(View itemView) {
             super(itemView);
         }
-    }*/
+    }
 }

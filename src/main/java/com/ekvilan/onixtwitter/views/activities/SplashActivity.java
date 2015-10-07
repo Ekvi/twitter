@@ -39,15 +39,17 @@ import twitter4j.auth.RequestToken;
 
 
 public class SplashActivity extends Activity {
-    private static String CONSUMER_KEY = "nH90d2WQmSjMlZCehCLwVWim3";
-    private static String CONSUMER_SECRET = "vnfiVUW8sufa3I3xqS1HRwYgiFgarRpDmp7urvZlfoKJCIUHdw";
-
-    private SharedPreferences pref;
+    private static final String CONSUMER_KEY = "nH90d2WQmSjMlZCehCLwVWim3";
+    private static final String CONSUMER_SECRET = "vnfiVUW8sufa3I3xqS1HRwYgiFgarRpDmp7urvZlfoKJCIUHdw";
+    private final String DENIED = "denied";
+    private final String OAUTH_VERIFIER = "oauth_verifier";
+    private final int TWEETS_COUNT = 200;
 
     private ImageView login;
     private Dialog authDialog;
     private WebView webView;
 
+    private SharedPreferences pref;
     private Twitter twitter;
     private RequestToken requestToken = null;
     private AccessToken accessToken;
@@ -121,13 +123,13 @@ public class SplashActivity extends Activity {
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
 
-                        if (url.contains("oauth_verifier") && !authComplete){
+                        if (url.contains(OAUTH_VERIFIER) && !authComplete){
                             authComplete = true;
                             Uri uri = Uri.parse(url);
-                            oauthVerifier = uri.getQueryParameter("oauth_verifier");
+                            oauthVerifier = uri.getQueryParameter(OAUTH_VERIFIER);
                             authDialog.dismiss();
                             new AccessTwitterAsyncTask().execute();
-                        }else if(url.contains("denied")){
+                        }else if(url.contains(DENIED)){
                             authDialog.dismiss();
                             Toast.makeText(SplashActivity.this,
                                     "Sorry !, Permission Denied", Toast.LENGTH_SHORT).show();
@@ -159,13 +161,13 @@ public class SplashActivity extends Activity {
                 SharedPreferences.Editor edit = pref.edit();
                 edit.putString("ACCESS_TOKEN", accessToken.getToken());
                 edit.putString("ACCESS_TOKEN_SECRET", accessToken.getTokenSecret());
+                edit.commit();
 
                 Paging paging = new Paging();
-                //paging.setCount(200);
-                paging.setCount(20);
+                paging.setCount(TWEETS_COUNT);
 
                 User owner = twitter.showUser(accessToken.getUserId());
-                List<twitter4j.Status> statuses = twitter.getUserTimeline(owner.getName(), paging);
+                List<twitter4j.Status> statuses = twitter.getHomeTimeline(paging);
 
                 List<Tweet> tweets = createTweetsList(statuses);
                 UserInfo userInfo = new UserInfo(owner.getName(), owner.getScreenName(),

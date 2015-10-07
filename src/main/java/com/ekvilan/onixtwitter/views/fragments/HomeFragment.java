@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUpTweetsList(List<Tweet> tweets) {
-        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets, false));
+        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
