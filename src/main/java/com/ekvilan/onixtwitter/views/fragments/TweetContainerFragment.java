@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,28 +16,28 @@ import android.widget.TextView;
 
 import com.ekvilan.onixtwitter.R;
 import com.ekvilan.onixtwitter.controllers.TweetsController;
-import com.ekvilan.onixtwitter.models.Tweet;
-import com.ekvilan.onixtwitter.views.adapters.TweetsAdapter;
+import com.ekvilan.onixtwitter.views.VerticalViewPager;
+import com.ekvilan.onixtwitter.views.adapters.SingleTweetAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
-public class HomeFragment extends Fragment {
-    private RecyclerView recyclerView;
+public class TweetContainerFragment extends Fragment  {
     private ImageView switcher;
+    private VerticalViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_tweets_container, container, false);
 
         initToolBar(view);
-        initView(view);
         addListeners();
 
-        TweetsController controller = TweetsController.getInstance();
-        setUpTweetsList(controller.getTweets());
+        viewPager = (VerticalViewPager)view.findViewById(R.id.viewpager);
+        SingleTweetAdapter adapter = new SingleTweetAdapter(getChildFragmentManager(), getFragments());
+        viewPager.setAdapter(adapter);
 
         return view;
     }
@@ -51,37 +49,42 @@ public class HomeFragment extends Fragment {
 
         TextView textView = (TextView) toolbar.findViewById(R.id.titleToolbar);
         textView.setText(getResources().getString(R.string.title_home));
+        switcher = (ImageView) toolbar.findViewById(R.id.switcher);
 
-        switcher = (ImageView)view.findViewById(R.id.switcher);
-        Drawable image = ResourcesCompat.getDrawable(getResources(), R.drawable.switcher_off, null);
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.switcher_on, null);
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-            switcher.setBackgroundDrawable(image);
+            switcher.setBackgroundDrawable(drawable);
         }else{
-            switcher.setBackground(image);
+            switcher.setBackground(drawable);
         }
     }
 
-    private void initView(View view) {
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-    }
+    private List<Fragment> getFragments(){
+        List<Fragment> fragments = new ArrayList<>();
+        TweetsController controller = TweetsController.getInstance();
 
-    private void setUpTweetsList(List<Tweet> tweets) {
-        recyclerView.setAdapter(new TweetsAdapter(getActivity(), tweets, false));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        for(int i = 0; i < controller.getTweets().size(); i++) {
+            fragments.add(SingleTweetFragment.newInstance(i));
+        }
+        return fragments;
     }
 
     private void addListeners() {
         switcher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSingleTweet();
+                showTweetsList();
             }
         });
     }
 
-    private void showSingleTweet() {
-        Fragment tweetContainerFragment = new TweetContainerFragment();
+    private void showTweetsList() {
+        Fragment homeFragment = new HomeFragment();
         HomeContainerFragment containerFragment = (HomeContainerFragment) getParentFragment();
-        containerFragment.replaceFragment(tweetContainerFragment, true);
+        containerFragment.replaceFragment(homeFragment, true);
+    }
+
+    public VerticalViewPager getViewPager() {
+        return viewPager;
     }
 }

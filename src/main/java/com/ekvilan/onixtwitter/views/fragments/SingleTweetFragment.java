@@ -1,13 +1,8 @@
 package com.ekvilan.onixtwitter.views.fragments;
 
 
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,19 +16,15 @@ import com.ekvilan.onixtwitter.utils.DownloadImageTask;
 
 
 public class SingleTweetFragment extends Fragment {
-    private TweetsController controller;
-
+    private static final String POSITION = "POSITION";
     private ImageView avatar;
     private ImageView image;
     private TextView tvName;
     private TextView tvScreenName;
     private TextView tvDate;
     private TextView tvMessage;
-    private ImageView switcher;
     private ImageView btnUp;
     private ImageView btnDown;
-
-    private int position = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -41,32 +32,13 @@ public class SingleTweetFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_single_tweet, container, false);
 
-        initToolBar(view);
         initView(view);
         addListeners();
 
-        controller = TweetsController.getInstance();
-
-        showTweet(controller.getTweets().get(position));
+        TweetsController controller = TweetsController.getInstance();
+        showTweet(controller.getTweets().get(getArguments().getInt(POSITION)));
 
         return view;
-    }
-
-    private void initToolBar(View view) {
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.home_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        TextView textView = (TextView) toolbar.findViewById(R.id.titleToolbar);
-        textView.setText(getResources().getString(R.string.title_home));
-        switcher = (ImageView) toolbar.findViewById(R.id.switcher);
-
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.switcher_on, null);
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-            switcher.setBackgroundDrawable(drawable);
-        }else{
-            switcher.setBackground(drawable);
-        }
     }
 
     private void initView(View view) {
@@ -101,35 +73,32 @@ public class SingleTweetFragment extends Fragment {
     }
 
     private void addListeners() {
-        switcher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTweetsList();
-            }
-        });
-
         btnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position > 0) {
-                    showTweet(controller.getTweets().get(--position));
-                }
+                TweetContainerFragment parent = (TweetContainerFragment) getParentFragment();
+                showNextTweet(parent, parent.getViewPager().getCurrentItem() - 1);
             }
         });
 
         btnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(position < controller.getTweets().size() - 1) {
-                    showTweet(controller.getTweets().get(++position));
-                }
+                TweetContainerFragment parent = (TweetContainerFragment) getParentFragment();
+                showNextTweet(parent, parent.getViewPager().getCurrentItem() + 1);
             }
         });
     }
 
-    private void showTweetsList() {
-        Fragment homeFragment = new HomeFragment();
-        HomeContainerFragment containerFragment = (HomeContainerFragment) getParentFragment();
-        containerFragment.replaceFragment(homeFragment, true);
+    public static SingleTweetFragment newInstance(int position) {
+        SingleTweetFragment fragment = new SingleTweetFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(POSITION, position);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    private void showNextTweet(TweetContainerFragment parent, int position) {
+        parent.getViewPager().setCurrentItem(position);
     }
 }
